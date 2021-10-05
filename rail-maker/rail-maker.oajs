@@ -1,0 +1,21 @@
+/////////////////////////////////////////////////////
+// Rail Maker v1.0
+// Run this to get your position and create a 
+// location object for using with a walk to script
+/////////////////////////////////////////////////////
+
+// returns: void
+function BuildLocationObject() {
+	//x is east west
+	//y is north south
+	var playerx = Player.X();
+	var playery = Player.Y();
+	var playerz = Player.Z();
+	
+	//find mines within an area relative to your char
+	miningLocation = Orion.GetTiles('mine', playerx, playery);
+	Orion.Wait('2000');
+	
+	TextWindow.Print('{x: ' + miningLocation[0].X() + ', y: ' + miningLocation[0].Y() + ', z: ' + miningLocation[0].Z() + '},');
+}
+
