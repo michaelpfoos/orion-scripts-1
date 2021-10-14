@@ -1,0 +1,924 @@
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Mining Bot v1.0
+// Description: Should auto-mine any cave system, smelt the ore, when full or out 
+//                   of shovels return home and drop off / resupply and return to cave.
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Globals
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Set the number of shovels needed for each run
+const numShovels = 7;
+const shovel = '0x0F3A';
+const prospectertool = '0x0FB4';
+const minedelay = '1500';
+//if turned on the current location will be dispalyed in a text window.
+const debug = false;
+
+const northMinocMine = [
+        {walkto: {x: 2472, y: 64, z:0},
+            mine: [
+                {x: 2472, y: 66, z:0},
+                {x: 2469, y:64, z: 0},
+                {x: 2475, y:63, z: 0}
+            ]
+        },
+        {walkto: {x: 2476, y: 52, z:0},
+            mine: [
+                {x: 2476, y: 51, z:0}               
+            ]
+        },
+        {walkto: {x: 2475, y: 45, z:0},
+            mine: [
+                {x: 2473, y: 46, z:0}               
+            ]
+        },
+        {walkto: {x: 2483, y: 43, z:0},
+            mine: [
+                {x: 2481, y: 41, z:0}               
+            ]
+        },
+        {walkto: {x: 2487, y: 47, z:0},
+            mine: [
+                {x: 2486, y: 49, z:0},
+                {x: 2488, y: 49, z:0}                 
+            ]
+        },
+        {walkto: {x: 2467, y: 55, z:0},
+            mine: [
+                {x: 2466, y: 55, z:0},
+                {x: 2467, y: 57, z:0}                 
+            ]
+        },
+        {walkto: {x: 2461, y: 55, z:0},
+            mine: [
+                {x: 2461, y: 56, z:0},
+                {x: 2462, y: 53, z:0}                 
+            ]
+        },
+        {walkto: {x: 2461, y: 48, z:0},
+            mine: [
+                {x: 2461, y: 47, z:0}                              
+            ]
+        },
+        {walkto: {x: 2456, y: 54, z:0},
+            mine: [
+                {x: 2454, y: 54, z:0},
+                {x: 2454, y: 56, z:0}                 
+            ]
+        },
+        {walkto: {x: 2450, y: 56, z:0},
+            mine: [
+                {x: 2447, y: 55, z:0}                            
+            ]
+        },
+        {walkto: {x: 2454, y: 49, z:0},
+            mine: [
+                {x: 2455, y: 47, z:0}                            
+            ]
+        }        
+]
+
+//needs to be re-done
+const britwestmine = [
+{x: 997, y: 1596, z: 40},
+{x: 1000, y: 1594, z: 53},
+{x: 1008, y: 1597, z: 60},
+{x: 1012, y: 1591, z: 52},
+{x: 1007, y: 1585, z: 52},
+{x: 999, y: 1588, z: 61},
+{x: 991, y: 1593, z: 45},
+{x: 991, y: 1590, z: 36},
+{x: 992, y: 1583, z: 59},
+{x: 991, y: 1580, z: 62},
+{x: 996, y: 1574, z: 51},
+{x: 1000, y: 1575, z: 50},
+{x: 1001, y: 1576, z: 49}
+]
+
+const newroute = [
+        {walkto: {x: 356, y: 1460, z:1},
+            mine: [
+                {x: 358, y: 1460, z:1}               
+            ]
+        },
+        {walkto: {x: 353, y: 1454, z:1},
+            mine: [
+                {x: 351, y: 1455, z:1},
+                {x: 355, y: 1454, z:1}                    
+            ]
+        },
+        {walkto: {x: 356, y: 1448, z:1},
+            mine: [
+                {x: 358, y: 1447, z:1}                                
+            ]
+        },
+        {walkto: {x: 362, y: 1449, z:1},
+            mine: [
+                {x: 363, y: 1449, z:1},
+                {x: 363, y: 1446, z:1}                                 
+            ]
+        } , 
+        {walkto: {x: 359, y: 1440, z:1},
+            mine: [
+                {x: 361, y: 1439, z:1},
+                {x: 358, y: 1438, z:1}                                 
+            ]
+        } , 
+        {walkto: {x: 369, y: 1437, z:1},
+            mine: [
+                {x: 369, y: 1439, z:1},
+                {x: 368, y: 1440, z:1}                                 
+            ]
+        } , 
+        {walkto: {x: 376, y: 1433, z:1},
+            mine: [
+                {x: 377, y: 1433, z:1},
+                {x: 376, y: 1429, z:1}                                 
+            ]
+        } , 
+        {walkto: {x: 384, y: 1431, z:1},
+            mine: [
+                {x: 385, y: 1429, z:1},
+                {x: 385, y: 1432, z:1}                                 
+            ]
+        } ,
+        {walkto: {x: 383, y: 1440, z:1},
+            mine: [
+                {x: 385, y: 1441, z:1},
+                {x: 382, y: 1442, z:1}                                 
+            ]
+        } , 
+        {walkto: {x: 378, y: 1445, z:1},
+            mine: [
+                {x: 375, y: 1445, z:1}                                            
+            ]
+        }                                    
+]
+
+
+const turdmur = [
+        {walkto: {x: 1018, y: 3527, z:-42},
+            mine: [
+                {x: 1018, y: 3525, z:-42}               
+            ]
+        },  	
+		  {walkto: {x: 1007, y: 3514, z:-42},
+            mine: [
+                {x: 1008, y: 3512, z:-42}               
+            ]
+        },  	
+		  {walkto: {x: 998, y: 3509, z:-43},
+            mine: [
+                {x: 1000, y: 3507, z:-32}               
+            ]
+        },  	
+        {walkto: {x: 990, y: 3500, z:-42},
+            mine: [
+                {x: 993, y: 3500, z:-27}               
+            ]
+        }, 
+        {walkto: {x: 998, y: 3494, z:-42},
+            mine: [
+                {x: 999, y: 3495, z:-42}               
+            ]
+        },
+        {walkto: {x: 1007, y: 3482, z: -42},
+            mine: [
+                {x: 1008, y: 3480, z: -42}               
+            ]
+        },  
+        {walkto: {x: 1000, y: 3483, z: -42},
+            mine: [
+                {x: 999, y: 3485, z: -42}               
+            ]
+        },
+        {walkto: {x: 992, y: 3488, z: -42},
+            mine: [
+                {x: 993, y: 3488, z: -42}               
+            ]
+        },
+        {walkto: {x: 993, y: 3476, z: -42},
+            mine: [
+                {x: 995, y: 3474, z: -42}              
+            ]
+        },
+        {walkto: {x: 1003, y: 3464, z: -42},
+            mine: [
+                {x: 1001, y: 3464, z: -42}              
+            ]
+        },
+        {walkto: {x: 1005, y: 3467, z: -42},
+            mine: [
+                {x: 1009, y: 3469, z: -19}             
+            ]
+        }, 
+        {walkto: {x: 1038, y: 3431, z: -43},
+            mine: [
+                {x: 1038, y: 3432, z: -43}            
+            ]
+        },
+        {walkto: {x: 1047, y: 3439, z: -42},
+            mine: [
+                {x: 1046, y: 3438, z: -42}           
+            ]
+        }, 
+        {walkto: {x: 1043, y: 3445, z: -42},
+            mine: [
+                {x: 1042, y: 3447, z: -42}          
+            ]
+        },
+       {walkto: {x: 1042, y: 3417, z: -43},
+            mine: [
+                {x: 1042, y: 3415, z: -43}         
+            ]
+        },
+        {walkto: {x: 1034, y: 3409, z: -43},
+            mine: [
+               {x: 1037, y: 3412, z: -26}        
+            ]
+        },
+        {walkto: {x: 1037, y: 3401, z: -43},
+            mine: [
+               {x: 1038, y: 3399, z: -31}      
+            ]
+        },
+        {walkto: {x: 1045, y: 3400, z: -43},
+            mine: [
+               {x: 1045, y: 3398, z: -27}    
+            ]
+        },
+        {walkto: {x: 1049, y: 3411, z: -42},
+            mine: [
+              {x: 1049, y: 3410, z: -423} 
+            ]
+        }                                                                                  
+]
+
+function mineNorthMinoc() {
+	MiningBot(northMinocMine);
+}
+
+function mineWestBrit() {
+	MiningBot(britwestmine);
+}
+
+function minenewroute() {
+	MiningBot(newroute);
+}
+
+function mineturdmur() {
+	MiningBot(turdmur);
+}
+
+var dropOffBoxLocation = {x: 1857, y: 288, z: 7}; //Do not bellieve this is used.
+
+//add object to contain x, y, z locations in house
+const locationsObj = {
+	ignotBoxX: 2549,
+	ignotBoxY: 297,
+	ignotBoxZ: 21,
+}
+
+// make these your own containers serials
+var containersObj = {
+	gems: '0x4222CB3D', 
+	ingots: '0x41EA5D46'
+}
+
+// graphic ids
+var gemsObj = {
+	ecruCitrine: '0x3195',
+	perfectEmerald: '0x3194',
+	turquoise: '0x3193',
+	darkSapphire: '0x3192',
+	blueDiamond: '0x3198',
+	crystallineBlackrock: '0x5732',
+	fireRuby: '0x3197',
+	smallBlackRock1: '0x0F26',
+	smallBlackRock2: '0x0F2B',
+	smallBlackRock3: '0x0F2A',
+	smallBlackRock4: '0x0F28',
+}
+
+var oreSizesObj = {
+	large: '0x19B9',
+	medium: '0x19B8',
+	small: '0x19BA',
+	tiny: '0x19B7'
+}
+
+var rareOreObj = {
+	valorite: '0x08AB',
+	verite: '0x089F',
+	agapite: '0x0979'
+	//golden: '0x08A5'
+}
+
+// Journal Strings
+var backpackFullStr = 'Your backpack is full.';
+var mineDepleatedStr = 'There is no metal here to mine.';
+var brokenShovelStr = 'You destroyed the item : shovel';
+var smeltingFailedStr = 'You burn away the impurities';
+var digMessageStr = 'You dig some ';
+var cantMineStr = "You can't mine there";
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Main Function
+////////////////////////////////////////////////////////////////////////////////////////////////
+//Call mining bot with the mine you want to work
+
+// returns: void
+function MiningBot(rail) {
+	
+	miningLocations = rail; //create a global
+
+	if (!Player.Dead()) {
+		
+		Init();
+				
+		StartMine();	
+	}
+}
+
+// returns: void
+function Init() {
+		//Orion.ResetIgnoreList();
+		Orion.Wait('1000');
+
+		Dismount();
+		Orion.Wait('1000');
+		
+		SetMount();
+		Orion.Wait('1000');
+		
+		SetShovel();
+		Orion.Wait('1000');		
+		
+		SetHomeRune();
+		Orion.Wait('1000');
+		
+		SetMineRune();
+		Orion.Wait('1000');
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Shovel Functions
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+// returns: List<Serial>
+function GetShovels() {
+	return Orion.FindType(shovel);
+}
+
+// returns: boolean
+function NeedsNewShovel() {
+	var isBroken = MessageInJournal(brokenShovelStr);
+	
+	if (isBroken) {
+		ClearJournalMessage(brokenShovelStr);
+	}
+	
+	return isBroken;
+}
+
+// returns: void
+function SetShovel() {
+	var shovels = GetShovels();
+	
+	if (shovels !== '') {
+		Orion.AddObject('shovel', shovels[0]);
+	} else {	
+		Orion.Terminate('all');
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Go Home Functions
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+// returns: void
+function GoHome() {
+	CastSpell();
+	Orion.Wait('2000');
+	Orion.FindObject('homeRune');
+	Orion.TargetObject('homeRune');
+}
+
+// returns: void
+function SetHomeRune() {
+	Orion.AddObject('homeRune');
+	Orion.Print('-1', 'Target your rune home');
+	Orion.WaitWhileTargeting();
+}
+
+// returns: void
+function SetMineRune() {
+	Orion.AddObject('mineRune');
+	Orion.Print('-1', 'Target your rune to the mines');
+	Orion.WaitWhileTargeting();
+}
+
+// returns: void
+function GoToMine() {
+	CastSpell();
+	Orion.Wait('2000');
+	Orion.FindObject('mineRune');
+	Orion.TargetObject('mineRune');
+}
+
+function GoDropAndComeBack() {
+	MountUp();
+	Orion.Wait('1000');
+	
+	GoHome();
+	Orion.Wait('2000');	
+	
+	Orion.WalkTo(2549,303, 21);
+	Orion.Wait('3000');
+	makeShovel(); 
+	
+	UnloadIngots();
+	Orion.Wait('2000');
+	
+	//UnloadOre();
+	//Orion.Wait('2000');
+	
+	UnloadGems();
+	Orion.Wait('2000');
+	
+	GoToMine();
+	Orion.Wait('2000');
+	
+	StartMine();
+	
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Unload/Restock Functions
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+// returns: void
+function UnloadIngots() { 
+	Orion.WalkTo(locationsObj.ignotBoxX, locationsObj.ignotBoxY, locationsObj.ignotBoxZ);
+	Orion.Wait(6000);
+
+	var ingots = '0x1BF2';	
+	Orion.Print('-1', 'Unload Ingots: ' + Orion.FindType(ingots).toString());
+	
+	while(Orion.FindType(ingots).toString() !== '') {
+		Orion.DragItemType(ingots);
+ 		Orion.DropDraggedItem(containersObj.ingots);
+ 		Orion.Wait('1000');
+	}
+	return;
+}
+
+// returns: void
+function UnloadGems() {
+	walkToGemBox();
+	Orion.Wait(6000);
+	Orion.Print('-1', 'Unload Gems');
+	var gems = gemsObj.ecruCitrine + '|' + gemsObj.perfectEmerald + '|' + gemsObj.turquoise + '|' + gemsObj.darkSapphire + '|' +
+							gemsObj.blueDiamond + '|' + gemsObj.crystallineBlackrock + '|' + gemsObj.fireRuby + '|' + 
+							gemsObj.smallBlackRock1 + '|' +  gemsObj.smallBlackRock2 + '|' +  gemsObj.smallBlackRock3 + '|' +   gemsObj.smallBlackRock4;
+ 
+	while(Orion.FindType(gems).toString() !== '') {
+		Orion.DragItemType(gems);
+ 		Orion.DropDraggedItem(containersObj.gems);
+ 		Orion.Wait('1000');
+	}
+	return;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Mount Functions
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+function SetMount() {
+	Orion.AddObject('myMount');
+	Orion.Print('-1', 'Target your mount');
+	Orion.WaitWhileTargeting();
+}
+
+function MountUp() {
+	Orion.Print('-1', 'Mount Up');
+	Orion.FindObject('myMount');
+	Orion.UseObject('myMount')
+}
+
+function Dismount() {
+	Orion.Print('-1', 'Dismount');
+	Orion.UseObject('self');
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Walking Functions
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+// returns: void
+function MoveToNextLocation(pos) {		
+		
+		var goto = miningLocations[pos].walkto; //change
+		
+		if ( debug === true ) {		
+			TextWindow.Open();
+			TextWindow.Print('x: ' + goto.x + ' y: ' + goto.y + ' z: ' + goto.z);
+		}
+		
+		Orion.Wait('1000');
+		MoveToLocation(goto);
+}
+
+// returns: void?
+function MoveToLocation(goto) {
+	MountUp();
+	Orion.Wait('1000');
+	//walk to the mine
+	Orion.WalkTo(goto.x, goto.y, goto.z);
+	//RemoveLocation();
+	Orion.Wait('2000');
+}
+
+// args: string
+// returns: { x: int, y: int, z: int }
+function BuildGoToObject(coords) {
+	var c = coords.split(' ');
+	var coordsObj = {
+		x: c[0],
+		y: c[1],
+		z: c[2]
+	}
+	Orion.Print('-1', 'Location: ' + coordsObj);
+	return coordsObj;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Mining Functions
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+function StartMine() {
+	for (var i = 0; i < miningLocations.length; i++) {
+		MoveToNextLocation(i);
+		Mine(i);
+	}
+	
+	GoDropAndComeBack();
+}
+
+//returns: void
+function Mine(arraylocation) { //change
+	Dismount();
+	
+	mineLocations = miningLocations[arraylocation].mine
+	
+	var x;
+	var y;
+	var z;
+	var ptool;	
+	
+	//dig all the locations up
+	for (var i=0;i < mineLocations.length;i++) {
+			
+			x = mineLocations[i].x;
+			y = mineLocations[i].y;
+			z = mineLocations[i].z;			
+			
+			Orion.Wait('1000');
+			Orion.Print('-1', 'Mine');
+			//prospect
+			Orion.FindObject('shovel');
+			Orion.UseObject('shovel');
+			Orion.Wait('500');
+			Orion.TargetTile('mine', x, y, z);
+			Orion.Wait(minedelay);
+			
+			ptool = Orion.FindType(prospectertool);		
+			
+			if (!MineEmpty() && ptool.length > 0) {
+				Orion.UseObject(ptool[0]);
+				Orion.Wait('500');
+				Orion.TargetTile('mine', x, y, z);	
+				Orion.Wait(minedelay);
+			}	
+			//end of prospect	
+			while (!MineEmpty() && !PlayerOverweight() && !CantMine()) {
+				Orion.Print('-1', 'Keep Mining');
+				Orion.FindObject('shovel');
+				Orion.UseObject('shovel');
+		
+				if (Orion.WaitForTarget(1000)) {
+					Orion.TargetTile('mine', x, y, z);
+					Orion.Wait(minedelay); //was 2000
+				}
+		
+				// Check for broken shovel
+				if (NeedsNewShovel()) {
+					SetShovel();
+				}
+		
+				// Check for hard to smelt ores
+				if (MinedRareMetal()) {
+					SmeltOre();
+				}
+			}; //end of while loop
+	
+			// Move if empty and all spots have been mined
+			if (MineEmpty() || CantMine()) {
+				ClearJournalMessage(mineDepleatedStr);
+				ClearJournalMessage(cantMineStr);
+				SmeltOre();
+				if ( i === (mineLocations.length - 1) ) {					
+					return; 		
+				}				
+			}
+	
+			// Smelt if overweight
+			if (PlayerOverweight()) {
+				SmeltOre();				
+			}	
+	} //end of for loop 
+} //end of function
+
+// returns: void?
+function MinedRareMetal() {
+	var oreKeys = Object.keys(rareOreObj);
+	
+	for (var i = 0; i < oreKeys.length; i++) {
+		var oreMessage = digMessageStr + oreKeys[i];
+		if (MessageInJournal(oreMessage)) {
+			ClearJournalMessage(oreMessage);
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+// args: none
+// returns: void
+function SmeltOre() {
+	var oreSizes = oreSizesObj.large + '|' + oreSizesObj.medium + '|' + oreSizesObj.small + '|' + oreSizesObj.tiny;  //  '0x19B8|0x19B7|0x19BA|0x19B9';
+	var orePiles = Orion.FindType(oreSizes);
+	Orion.Print('-1', 'Piles: ' + orePiles);
+		
+	for (var p = 0; p < orePiles.length; p++) {
+		var pile = orePiles[p];
+		
+		if (ShouldSmelt(pile)) {
+			SmeltPile(pile);
+		}
+	}
+	
+	Orion.Wait('2000'); //Is this something we need?
+}
+
+// args: serial
+// returns: boolean
+function ShouldSmelt(pile) {
+	var shouldSmelt = false;
+	var gameObject = Orion.FindObject(pile);
+	
+	if (gameObject) {
+		switch(gameObject.Graphic()) {
+			case oreSizesObj.tiny:
+				// only smelt the tiny piles if there are 2 or more
+				if (gameObject.Count() > 1) {
+					shouldSmelt = true;
+				} else {
+					shouldSmelt = false;
+				}
+				
+				break;
+			default:
+				// all other ore sizes
+				shouldSmelt = true;
+				break;
+		} 
+	}
+	
+	return shouldSmelt;
+}
+
+// args: serial
+// returns: void
+function SmeltPile(pile) {
+		Orion.Print('-1', 'Smelt Pile: ' + pile);
+		Orion.UseObject(pile);
+		Orion.WaitForTarget(1500);
+		Orion.TargetObject('myMount');
+		Orion.Wait('1500');
+
+		if (SmeltFailed() && ShouldSmelt(pile)) {
+			SmeltPile(pile);
+		}
+}
+
+// returns: boolean
+function SmeltFailed() {
+	var didFail = MessageInJournal(smeltingFailedStr);
+	
+	if (didFail) {
+		ClearJournalMessage(smeltingFailedStr);
+	}
+	
+	return didFail;
+}
+
+// returns: boolean
+function MineEmpty() {
+	var isDepleated = MessageInJournal(mineDepleatedStr);
+	var debugStr =  'Depleted? ' + isDepleated;
+	Orion.Print('-1', debugStr);
+	
+	return isDepleated;
+}
+
+function CantMine() {
+	var cantMine = MessageInJournal(cantMineStr);
+	return cantMine;
+}
+
+// returns: boolean
+function PlayerOverweight() {
+	var currentWeight = Player.Weight();
+	var maxWeight = Player.MaxWeight();
+	var isHeavy = currentWeight + 24 > maxWeight - 25;
+	var debugStr = 'Am I fat? ' + isHeavy;
+	Orion.Print('-1', debugStr);
+	
+	return  isHeavy;
+}
+
+// returns: boolean
+function BackpackFull() {
+	var isFull = MessageInJournal(backpackFullStr);
+	var debugStr =  'Backpack full? ' + isFull;
+	
+	if (isFull) {
+		ClearJournalMessage(backpackFullStr);
+	}
+	
+	return isFull;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Wrapper Functions
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+// returns: void
+function ClearJournalMessage(message) {
+	Orion.ClearJournal(message);	
+}
+
+// returns: boolean
+function MessageInJournal(message) {
+	return Orion.InJournal(message) === null ? false : true;
+}
+
+// returns: int
+// Orion expects skills to be whole numbers so we multiply
+// by 10 to remove the decimal
+function Skill(s) {
+	return s * 10;
+}
+
+// returns: void
+function CastSpell() {
+	var hasMagery = (Orion.SkillValue('magery', 'real') >= Skill(50));
+	var hasChivalry = (Orion.SkillValue('chivalry', 'real') >= Skill(50));
+	
+	Orion.Print('-1', 'Magery?: ' + hasMagery + ' Chivarly?: ' + hasChivalry);
+
+	if (hasMagery) {
+		 Orion.Cast('Recall');
+	}
+
+	if (hasChivalry) {
+		Orion.Cast('Sacred Journey');
+	}
+}
+
+function makeShovel() {
+	const shovelsRequested = 1;	
+	const tinkerTools = '0x1EB9'
+	const shovel = '0x0F3A'
+	const shovelIndex = 18;
+	const tinkerToolsIndex = 11;		
+	//const numShovels = 7;  -making this global.  remove if script still works.
+	
+	var tools = Orion.FindType(tinkerTools);
+	var shovels = Orion.FindType(shovel);	
+		
+	if ( tools.length < 2 ) {
+		craftItem(tools[0], tinkerToolsIndex, 1);		
+	}	
+	
+	//make shovels
+	craftItem(tools[0], shovelIndex, (numShovels - shovels.length));		
+	
+}
+
+function craftItem(tool, index, numberItemsToCraft) {
+	//declare delay
+	const delay = 1200; 	
+ 	var hook; 	
+ 	var gump;
+	
+	for (i=0;i<numberItemsToCraft;i++) {			
+		
+		//use tool		    
+		Orion.UseObject(tool);		
+		
+		//delay
+		Orion.Wait(delay);		
+	
+		//save the gump in memory
+		gump = Orion.GetLastGump();		
+	
+		//Create a response to the gump		
+		hook = Orion.CreateGumpHook(index);
+	
+		//delay
+		Orion.Wait(delay);
+	
+		//Make your selection
+		gump.Select(hook);					
+	
+		Orion.Wait(delay);	
+	}
+		
+		//save the gump in memory
+		gump = Orion.GetLastGump();		
+		
+		//Wait
+		Orion.Wait(2000);		
+	
+		//close the gump
+		if ( gump != null ) {
+			gump.Close();		
+		}		
+}
+
+function walkToGemBox() {
+	const delay = 200;
+	
+	Orion.WalkTo(2539, 296, 41);
+	Orion.Wait(1000);
+	Orion.Step('north');
+	Orion.Wait(delay);
+	Orion.Step('east');
+	Orion.Wait(delay);
+	Orion.Step('east');
+	Orion.Wait(delay);	
+	Orion.Step('east');
+	Orion.Wait(delay);	
+	Orion.Step('east');
+	Orion.Wait(delay);	
+	Orion.Step('south');
+	Orion.Wait(delay);	
+	Orion.WalkTo(2550, 303, 41);
+}
+
+/////////////////////////////////////////////////////
+// Rail Maker v1.0
+// Get the location of the last target mined.  
+/////////////////////////////////////////////////////
+
+// returns: void
+function railMaker() {
+
+ 	Orion.WalkTo(1009, 3476, -42); //works
+ 	var shovels = Orion.FindType('0x0F3A');
+ 	Orion.Wait('500');
+ 	Orion.FindType(shovels); 	
+ 	Orion.Wait('500');
+ 	Orion.UseObject(shovels[0]);
+ 	Orion.Wait('500');
+	Orion.TargetTile('mine', 1009, 3476, -42);
+	//TextWindow.Open();
+	
+	//var tile = Orion.GetLastTargetPosition();
+	
+	
+	//var x = tile.X();
+	//var y = tile.Y();
+	//var z = tile.Z();	
+
+	
+	//TextWindow.Print('{x: ' + x + ', y: ' + y + ', z: ' + z + '},');
+}
+
+function railMakerCave() {
+	var playerx = Player.X();
+	var playery = Player.Y();
+	var playerz = Player.Z();
+	
+	//find mines within an area relative to your char
+	var miningLocation = Orion.GetTiles('mine', playerx, playery);
+	Orion.Wait('2000');
+	
+	TextWindow.Open();
+	TextWindow.Print('{x: ' + miningLocation[0].X() + ', y: ' + miningLocation[0].Y() + ', z: ' + miningLocation[0].Z() + '},');
+}
