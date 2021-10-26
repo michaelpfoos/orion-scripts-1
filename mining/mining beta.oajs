@@ -80,6 +80,67 @@ const northMinocMine = [
         }        
 ]
 
+const deceit2Mine = [
+        {walkto: {x: 4042, y: 314, z:0},
+            mine: [
+                {x: 4043, y: 314, z:0},
+                {x: 4042, y:311, z: 0},
+                {x: 4038, y:313, z: 0}
+            ]
+        }, 
+    	 {walkto: {x: 4038, y: 312, z:0},
+            mine: [
+                {x: 4038, y: 310, z:0}             
+            ]
+        }, 
+      	 {walkto: {x: 4033, y: 316, z:0},
+            mine: [
+                {x: 4030, y: 316, z:0}             
+            ]
+        }, 
+        {walkto: {x: 4034, y: 323, z:0},
+            mine: [
+                {x: 4037, y: 325, z:0},
+                {x: 4031, y: 323, z:0}               
+            ]
+        }, 
+        {walkto: {x: 4032, y: 327, z:0},
+            mine: [
+                {x: 4029, y: 328, z:0},
+                {x: 4033, y: 329, z:0}               
+            ]
+        }, 
+        {walkto: {x: 4038, y: 330, z:0},
+            mine: [
+                {x: 4040, y: 329, z:0}                       
+            ]
+        },
+        {walkto: {x: 4031, y: 338, z:0},
+            mine: [
+                {x: 4033, y: 338, z:0},
+                {x: 4028, y: 338, z:0}                        
+            ]
+        }, 
+        {walkto: {x: 4021, y: 338, z:0},
+            mine: [
+                {x: 4023, y: 337, z:0},
+                {x: 4021, y: 335, z:0}                        
+            ]
+        },
+        {walkto: {x: 4014, y: 335, z:0},
+            mine: [
+                {x: 4014, y: 333, z:0},
+                {x: 4012, y: 337, z:0}                        
+            ]
+        },
+        {walkto: {x: 4015, y: 343, z:0},
+            mine: [
+                {x: 4015, y: 346, z:0},
+                {x: 4018, y: 344, z:0}                        
+            ]
+        }                                
+]
+
 //needs to be re-done
 const britwestmine = [
 {x: 997, y: 1596, z: 40},
@@ -258,6 +319,10 @@ const turdmur = [
 
 function mineNorthMinoc() {
 	MiningBot(northMinocMine);
+}
+
+function mineDeceit2() {
+	MiningBot(deceit2Mine);
 }
 
 function mineWestBrit() {
